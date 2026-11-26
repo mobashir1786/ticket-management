@@ -44,7 +44,7 @@ export default function TicketForm({ session, ticket, onSaved, onError, onCancel
       <label>Title<input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} minLength="3" maxLength="120" required /></label>
       <label>Description<textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} minLength="10" maxLength="5000" required /></label>
       <div className="row"><label>Category<select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>{CATEGORIES.map((x) => <option key={x} value={x}>{label(x)}</option>)}</select></label>
-      {!ticket && <label>Priority<select value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })}>{PRIORITIES.map((x) => <option key={x} value={x}>{label(x)}</option>)}</select></label>}</div>
+        {!ticket && <label>Priority<select value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })}>{PRIORITIES.map((x) => <option key={x} value={x}>{label(x)}</option>)}</select></label>}</div>
       <div className="actions"><button type="button" className="ghost" onClick={close}>Cancel</button><button disabled={busy}>{busy ? 'Saving...' : ticket ? 'Save changes' : 'Create'}</button></div>
     </form></div>}
   </>;

@@ -34,10 +34,6 @@ export default function Login({ onLogin, message }) {
         <label>Password<input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} minLength={register ? 8 : 1} maxLength="72" required /></label>
         <button type="submit" disabled={busy}>{busy ? 'Please wait...' : register ? 'Create account' : 'Sign in'}</button>
         <p className="auth-switch">{register ? 'Already have an account?' : 'New here?'} <button type="button" onClick={() => { setRegister(!register); setError(''); }}>{register ? 'Sign in' : 'Create an account'}</button></p>
-        {!register && <div className="demo">
-          <button type="button" onClick={() => setForm({ ...form, email: 'user1@helpdesk.com', password: 'User@123' })}>Demo User</button>
-          <button type="button" onClick={() => setForm({ ...form, email: 'admin@helpdesk.com', password: 'Admin@123' })}>Demo Admin</button>
-        </div>}
       </form>
     </div>
   );
