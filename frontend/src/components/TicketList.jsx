@@ -1,10 +1,11 @@
 import React from 'react';
 import { label, userLabel } from '../utils/tickets';
+import LoadingIndicator from './LoadingIndicator';
 
 export default function TicketList({ tickets, loading, error, pagination, page, onSelect, onPageChange }) {
   return <>
     <section className="ticket-list" aria-label="Tickets" aria-busy={loading}>
-      {loading && <div className="empty">Loading tickets...</div>}
+      {loading && <div className="empty"><LoadingIndicator>Loading tickets...</LoadingIndicator></div>}
       {!loading && tickets.map((ticket) => (
         <button className="ticket" key={ticket._id} onClick={() => onSelect(ticket._id)}>
           <div><span className={`badge ${ticket.status.toLowerCase()}`}>{label(ticket.status)}</span><h3>{ticket.title}</h3><p>{ticket.description}</p><small className="ticket-author">Created by: {userLabel(ticket.createdBy)}</small></div>

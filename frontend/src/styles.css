@@ -72,6 +72,36 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.loading-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spinner {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin .75s linear infinite;
+}
+
+.operation-loading {
+  margin-bottom: 14px;
+  color: #52745a;
+  font-size: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation: none; }
+}
+
 .ghost {
   border-color: #e2e9e1;
   background: #fff;

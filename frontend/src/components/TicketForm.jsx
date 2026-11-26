@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { api } from '../services/api';
 import { CATEGORIES, PRIORITIES, label } from '../utils/tickets';
+import LoadingIndicator from './LoadingIndicator';
 
 const emptyTicket = { title: '', description: '', category: 'TECHNICAL', priority: 'MEDIUM' };
 
@@ -26,8 +27,8 @@ export default function TicketForm({ session, ticket, onSaved, onError, onCancel
         body: JSON.stringify(form),
       }, session.token);
       if (!ticket) setForm(emptyTicket);
-      close();
       await onSaved();
+      close();
     } catch (err) {
       if (err.status === 401) onError(err);
       else setError(err.message);
@@ -38,14 +39,14 @@ export default function TicketForm({ session, ticket, onSaved, onError, onCancel
 
   return <>
     {!ticket && <button onClick={() => setOpen(true)}>+ New ticket</button>}
-    {open && <div className="overlay"><form className="modal" onSubmit={submit} role="dialog" aria-modal="true" aria-labelledby="ticket-form-title">
+    {open && <div className="overlay"><form className="modal" onSubmit={submit} role="dialog" aria-modal="true" aria-labelledby="ticket-form-title" aria-busy={busy}>
       <h2 id="ticket-form-title">{ticket ? 'Edit ticket' : 'Create ticket'}</h2>
       {error && <div className="error" role="alert">{error}</div>}
-      <label>Title<input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} minLength="3" maxLength="120" required /></label>
-      <label>Description<textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} minLength="10" maxLength="5000" required /></label>
-      <div className="row"><label>Category<select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>{CATEGORIES.map((x) => <option key={x} value={x}>{label(x)}</option>)}</select></label>
-        {!ticket && <label>Priority<select value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })}>{PRIORITIES.map((x) => <option key={x} value={x}>{label(x)}</option>)}</select></label>}</div>
-      <div className="actions"><button type="button" className="ghost" onClick={close}>Cancel</button><button disabled={busy}>{busy ? 'Saving...' : ticket ? 'Save changes' : 'Create'}</button></div>
+      <label>Title<input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} minLength="3" maxLength="120" disabled={busy} required /></label>
+      <label>Description<textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} minLength="10" maxLength="5000" disabled={busy} required /></label>
+      <div className="row"><label>Category<select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} disabled={busy}>{CATEGORIES.map((x) => <option key={x} value={x}>{label(x)}</option>)}</select></label>
+        {!ticket && <label>Priority<select value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })} disabled={busy}>{PRIORITIES.map((x) => <option key={x} value={x}>{label(x)}</option>)}</select></label>}</div>
+      <div className="actions"><button type="button" className="ghost" onClick={close} disabled={busy}>Cancel</button><button disabled={busy}>{busy ? <LoadingIndicator>Saving...</LoadingIndicator> : ticket ? 'Save changes' : 'Create'}</button></div>
     </form></div>}
   </>;
 }
