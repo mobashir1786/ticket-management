@@ -1,7 +1,10 @@
 process.env.DB_URI = 'mongodb://127.0.0.1:27017/helpdesk-test';
 process.env.JWT_SECRET = 'test-secret-with-enough-length';
 
+jest.mock('./config/db', () => jest.fn().mockResolvedValue());
+
 const request = require('supertest');
+const connectDb = require('./config/db');
 const app = require('./app');
 
 describe('Health and routing', () => {
@@ -28,5 +31,18 @@ describe('Health and routing', () => {
       .send('{"email":');
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('Invalid JSON body');
+  });
+
+  it('surfaces a database connection failure on API requests', async () => {
+    connectDb.mockRejectedValueOnce(new Error('Database connection failed'));
+    const log = jest.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      const response = await request(app).post('/api/auth/login')
+        .send({ email: 'user@example.com', password: 'password123' });
+      expect(response.status).toBe(500);
+      expect(response.body.success).toBe(false);
+    } finally {
+      log.mockRestore();
+    }
   });
 });

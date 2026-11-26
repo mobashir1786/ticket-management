@@ -8,6 +8,7 @@ const { promisify } = require('util');
 const path = require('path');
 const request = require('supertest');
 const app = require('./app');
+const env = require('./config/env');
 const User = require('./models/User');
 const Ticket = require('./models/Ticket');
 
@@ -21,8 +22,7 @@ let ticketId;
 
 beforeAll(async () => {
   mongo = await MongoMemoryServer.create();
-  await mongoose.connect(mongo.getUri());
-  await User.create({ name: 'Admin', email: 'admin@example.com', password: 'password123', role: 'ADMIN' });
+  env.DB_URI = mongo.getUri();
 });
 
 afterAll(async () => {
@@ -32,17 +32,21 @@ afterAll(async () => {
 
 describe('Support ticket workflow', () => {
   it('registers users securely and authenticates an admin', async () => {
-    const user = await request(app).post('/api/auth/register').send({
-      name: 'First User', email: 'first@example.com', password: 'password123',
-    });
+    expect(mongoose.connection.readyState).toBe(0);
+    const [user, other] = await Promise.all([
+      request(app).post('/api/auth/register').send({
+        name: 'First User', email: 'first@example.com', password: 'password123',
+      }),
+      request(app).post('/api/auth/register').send({
+        name: 'Second User', email: 'second@example.com', password: 'password123',
+      }),
+    ]);
     expect(user.status).toBe(201);
+    expect(mongoose.connection.readyState).toBe(1);
     expect(user.body.data.user.role).toBe('USER');
     expect(user.body.data.user.password).toBeUndefined();
     userToken = user.body.data.token;
 
-    const other = await request(app).post('/api/auth/register').send({
-      name: 'Second User', email: 'second@example.com', password: 'password123',
-    });
     expect(other.status).toBe(201);
     otherToken = other.body.data.token;
 
@@ -51,6 +55,7 @@ describe('Support ticket workflow', () => {
     });
     expect(escalation.status).toBe(400);
 
+    await User.create({ name: 'Admin', email: 'admin@example.com', password: 'password123', role: 'ADMIN' });
     const admin = await request(app).post('/api/auth/login').send({
       email: 'admin@example.com', password: 'password123',
     });

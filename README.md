@@ -59,6 +59,8 @@ The API listens on `http://localhost:5000`. Vite proxies local `/api` requests t
 
 Database selection uses `NODE_ENV`: `development` (the default) and `test` use `DB_URI`; `production` uses `DB_URI_PROD`. Set `NODE_ENV=production` and `DB_URI_PROD` to your Atlas connection string in your backend hosting provider's environment settings. The server fails to start if the selected URI is missing; it does not fall back to another database. Do not commit credentials or paste them into the frontend environment.
 
+The API connects to MongoDB before handling authentication or ticket requests and reuses an existing connection where possible, including in serverless deployments. `/api/health` checks that the API is running, not that MongoDB is reachable. If requests fail to connect, verify the Atlas connection string, database user permissions, and Atlas network access for the hosting provider.
+
 The seed adds one admin, one user and two sample tickets (one created by each) if they are missing, without deleting existing data. It does not remove data from earlier seed runs, change existing users' passwords or roles, and it stops if a demo email already belongs to a different role. Demo credentials are predictable: use them only for a disposable evaluation database, never a production system.
 
 `.env` values:
