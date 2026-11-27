@@ -26,8 +26,12 @@ export default function Login({ onLogin, message }) {
   return (
     <div className="login-page">
       <form onSubmit={submit}>
-        <div className="login-brand"><span className="brand-icon" aria-hidden="true">H</span><strong>HELP<span>DESK</span></strong></div>
-        <p className="eyebrow">Support portal</p><h1>{register ? 'Create an account' : 'Welcome back'}</h1>
+        <div className="login-brand">
+          <span className="brand-icon" aria-hidden="true">H</span>
+          <strong>HELP<span>DESK</span></strong>
+        </div>
+        <p className="eyebrow">Support portal</p>
+        <h1>{register ? 'Create an account' : 'Welcome back'}</h1>
         <p className="login-intro">{register ? 'Get started with your support workspace.' : 'Sign in to manage your support requests.'}</p>
         {(error || message) && <div className="error" role="alert">{error || message}</div>}
         {register && <label>Name<input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} minLength="2" maxLength="60" required /></label>}

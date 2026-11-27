@@ -45,7 +45,6 @@ function registerListeners() {
         action: EVENT_TO_ACTION[eventName],
         details: describe(eventName, payload),
       });
-      // console.log(`[notification] ${eventName} ticket=${payload.ticketId} actor=${payload.actorId}`);
     });
   });
 }
@@ -57,7 +56,7 @@ async function emitAsync(eventName, payload) {
       try {
         await listener(payload);
       } catch (error) {
-        console.error(`[notification] ${eventName} handler failed:`, error.message);
+        console.error(`[ticket event] ${eventName} handler failed:`, error.message);
       }
     })
   );

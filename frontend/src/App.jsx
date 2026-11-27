@@ -130,7 +130,11 @@ export default function App() {
             <div className="profile"><strong>{session.user.name}</strong><small>{session.user.role === 'ADMIN' ? 'Administrator' : 'Support user'}</small></div>
           </div>
           <div className="sidebar-section"><p className="eyebrow">WORKSPACE</p><div className="sidebar-active"><span aria-hidden="true">▦</span> Tickets</div></div>
-          <div className="sidebar-tip"><strong>Need a hand?</strong><p>Create a ticket and share the details so the support team can help.</p></div>
+          <div className="sidebar-tip">
+            {session.user.role === 'ADMIN'
+              ? <><strong>Ticket management</strong><p>Review and manage support requests.</p></>
+              : <><strong>Need a hand?</strong><p>Create a ticket and share the details so the support team can help.</p></>}
+          </div>
         </aside>
         <main className="workspace">
           {error && <div className="error" role="alert">{error}</div>}
@@ -147,6 +151,7 @@ export default function App() {
             error={error}
             pagination={pagination}
             page={filters.page}
+            hasFilters={Boolean(filters.search || filters.status || filters.priority)}
             onSelect={setSelected}
             onPageChange={(change) => setFilters((current) => ({ ...current, page: current.page + change }))}
           />

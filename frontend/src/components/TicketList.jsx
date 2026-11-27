@@ -2,7 +2,7 @@ import React from 'react';
 import { label, userLabel } from '../utils/tickets';
 import LoadingIndicator from './LoadingIndicator';
 
-export default function TicketList({ tickets, loading, error, pagination, page, onSelect, onPageChange }) {
+export default function TicketList({ tickets, loading, error, pagination, page, hasFilters, onSelect, onPageChange }) {
   return <>
     <section className="ticket-list" aria-label="Tickets" aria-busy={loading}>
       {loading && <div className="empty"><LoadingIndicator>Loading tickets...</LoadingIndicator></div>}
@@ -12,7 +12,9 @@ export default function TicketList({ tickets, loading, error, pagination, page, 
           <div className="ticket-meta"><span>{ticket.priority}</span><small>{ticket.category}</small></div>
         </button>
       ))}
-      {!loading && !error && !tickets.length && <div className="empty">No tickets found</div>}
+      {!loading && !error && !tickets.length && <div className="empty">
+        No tickets found. {hasFilters ? 'Try clearing your search or filters.' : 'Create your first ticket to get started.'}
+      </div>}
     </section>
     {pagination && pagination.total > 0 && <div className="pagination">
       <span>Page {pagination.page} of {pagination.totalPages} · {pagination.total} tickets</span>

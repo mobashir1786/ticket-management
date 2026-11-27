@@ -8,9 +8,9 @@ This submission includes the backend API and a React frontend. Search, paginatio
 
 | Item | URL |
 | --- | --- |
-| Frontend | Not deployed yet |
-| Backend API | Not deployed yet |
-| Health check | `GET /api/health` |
+| Frontend | https://frontend-green-beta-21.vercel.app/ |
+| Backend API | https://backend-ochre-seven-33.vercel.app/ |
+| Health check | https://backend-ochre-seven-33.vercel.app/api/health |
 
 Demo accounts created by `npm run seed` if they do not already exist:
 
@@ -86,7 +86,7 @@ routes -> controllers -> services -> models
          ticketEmitter.emitAsync(...)
                 |
                 v
-         ActivityLog + console notification
+             ActivityLog
 ```
 
 ```mermaid
@@ -96,10 +96,9 @@ flowchart LR
   services --> db[(MongoDB)]
   services --> emitter[ticketEmitter]
   emitter --> log[ActivityLog]
-  emitter --> notice[Console notification]
 ```
 
-Services emit an event only after the database write succeeds. Listeners are registered with `ticketEmitter.on`. `emitAsync` runs those listeners and waits for them. A listener failure is logged and does not change the HTTP result of the original action. Events are in-memory and best-effort: a process crash or database failure can leave an activity entry missing. A durable queue or transactional outbox would be needed for guaranteed delivery.
+Services emit an event only after the database write succeeds. Listeners are registered with `ticketEmitter.on`. `emitAsync` runs those listeners and waits for them to write the activity log. Notifications are not implemented. A listener failure is logged and does not change the HTTP result of the original action. Events are in-memory and best-effort: a process crash or database failure can leave an activity entry missing. A durable queue or transactional outbox would be needed for guaranteed delivery.
 
 | Event | When it fires | Activity action |
 | --- | --- | --- |
@@ -164,7 +163,7 @@ Send the token as `Authorization: Bearer <token>`.
 | PATCH | `/api/tickets/:id` | Owner while `OPEN` | `title`, `description`, `category` |
 | PATCH | `/api/tickets/:id` | Admin | `status`, `priority` |
 | DELETE | `/api/tickets/:id` | Owner while `OPEN` | — |
-| POST | `/api/tickets/:id/comments` | Owner or Admin | `message` |
+| POST | `/api/tickets/:id/comments` | Owner or Admin; ticket not `CLOSED` | `message` |
 | GET | `/api/health` | Public | — |
 
 Successful responses use `{ "success": true, "data": ... }`. Failures use `{ "success": false, "message": ... }`.
